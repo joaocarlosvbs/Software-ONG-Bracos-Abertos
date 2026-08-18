@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SISBAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue-deep:#1B4F91; --blue-mid:#3E7CC9; --blue-soft:#EAF2FF;
+  --yellow:#FFC93C; --yellow-soft:#FFF6DC;
+  --ink:#1E2A3A; --white:#FFFFFF; --line:#D8E3F0; --danger:#D64545;
+  --font-display:'Baloo 2', sans-serif; --font-body:'Nunito', sans-serif; --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-body);color:var(--ink);background:var(--blue-soft);min-height:100vh;}
+h1,h2,h3{font-family:var(--font-display);}
+button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit;}
+input,select{font-family:inherit;font-size:1rem;}
+.hidden{display:none !important;}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:6px;}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important;} }
+
+/* Header */
+.topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 24px;background:var(--white);border-bottom:3px solid var(--yellow);position:sticky;top:0;z-index:50;}
+.brand{display:flex;align-items:center;gap:12px;margin-right:auto;}
+.logo-slot{width:48px;height:48px;border-radius:50%;background:var(--blue-deep);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;box-shadow:0 3px 0 rgba(0,0,0,.08);}
+.logo-slot img{width:100%;height:100%;object-fit:cover;}
+.brand-text{display:flex;flex-direction:column;line-height:1.15;}
+.brand-text strong{font-family:var(--font-display);font-size:1.15rem;color:var(--blue-deep);}
+.brand-text span{font-size:.75rem;color:#6B7A90;}
+.mode-tabs{display:flex;gap:6px;background:var(--blue-soft);padding:4px;border-radius:999px;}
+.tab-btn{padding:8px 16px;border-radius:999px;font-weight:700;font-size:.85rem;color:var(--blue-deep);transition:.15s;}
+.tab-btn.active{background:var(--blue-deep);color:var(--white);}
+.lang-btn{font-weight:800;font-size:.8rem;letter-spacing:.03em;padding:8px 14px;border-radius:999px;background:var(--yellow-soft);color:var(--blue-deep);border:2px solid var(--yellow);}
+.lang-btn .sep{opacity:.5;margin:0 2px;}
+.site-link-btn{font-weight:800;font-size:.8rem;padding:8px 14px;border-radius:999px;background:var(--blue-soft);color:var(--blue-deep);border:2px solid var(--blue-mid);}
+
+/* Layout */
+main{max-width:1000px;margin:0 auto;padding:8px 16px 60px;}
+.view{display:none;}
+.view.active{display:block;}
+.view-enter{animation:fadeInUp .35s ease both;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* Kids hero + decoration */
+.kids-hero{position:relative;text-align:center;padding:36px 10px 8px;}
+.hero-bg{position:absolute;inset:-20px 0 0 0;overflow:hidden;pointer-events:none;z-index:0;height:220px;}
+.float-shape{position:absolute;border-radius:50%;filter:blur(2px);opacity:.3;animation:floaty 10s ease-in-out infinite;}
+@keyframes floaty{0%,100%{transform:translateY(0) translateX(0);}50%{transform:translateY(-18px) translateX(10px);}}
+.kids-hero h1,.kids-hero p{position:relative;z-index:1;}
+.kids-hero h1{font-size:2rem;color:var(--blue-deep);}
+.kids-hero p{margin-top:6px;color:#5C7092;font-weight:700;}
+
+/* Avatar builder */
+.avatar-builder{max-width:420px;margin:20px auto;background:var(--white);border-radius:var(--radius);padding:26px;text-align:center;box-shadow:0 10px 30px rgba(27,79,145,.1);}
+.avatar-builder h2{color:var(--blue-deep);font-size:1.3rem;}
+.avatar-builder .muted{color:#8393AA;font-size:.85rem;margin:6px 0 16px;}
+.avatar-preview{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;margin:0 auto 18px;position:relative;border:5px solid var(--white);box-shadow:0 0 0 4px var(--line);}
+.avatar-badge{position:absolute;top:-6px;right:-6px;font-size:26px;}
+.avatar-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+.avatar-opt{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;border:2px solid var(--line);background:var(--white);}
+.avatar-opt.active{border-color:var(--blue-deep);background:var(--blue-soft);}
+.avatar-color{width:32px;height:32px;border-radius:50%;border:3px solid transparent;}
+.avatar-color.active{border-color:var(--ink);}
+.avatar-actions{display:flex;gap:10px;justify-content:center;margin-top:16px;}
+.kids-avatar-chip{display:inline-flex;align-items:center;gap:8px;background:var(--white);padding:6px 14px 6px 6px;border-radius:999px;box-shadow:0 3px 10px rgba(27,79,145,.1);margin:0 0 10px;font-weight:700;font-size:.85rem;color:var(--blue-deep);}
+.kids-avatar-chip .mini-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+/* Trail */
+.trail{position:relative;max-width:620px;margin:0 auto;padding:30px 10px 70px;}
+.trail::before{content:'';position:absolute;left:50%;top:0;bottom:20px;width:6px;transform:translateX(-50%);background-image:repeating-linear-gradient(to bottom, var(--blue-mid) 0 14px, transparent 14px 28px);border-radius:3px;}
+.trail-row{position:relative;display:flex;justify-content:center;margin:26px 0;z-index:1;opacity:0;transform:translateY(26px);transition:opacity .5s ease, transform .5s ease;}
+.trail-row.in-view{opacity:1;transform:translateY(0);}
+.trail-row.left .node-wrap{transform:translateX(-92px);}
+.trail-row.right .node-wrap{transform:translateX(92px);}
+.node-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;width:140px;}
+.node{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:4px solid var(--white);box-shadow:0 4px 0 rgba(0,0,0,.12);transition:transform .15s ease;position:relative;}
+.node.blue{background:linear-gradient(160deg,var(--blue-mid),var(--blue-deep));}
+.node.yellow{background:linear-gradient(160deg,#FFDA6B,var(--yellow));}
+.node:hover,.node:focus-visible{transform:scale(1.08);}
+.node.current{animation:pulseGlow 1.8s ease-in-out infinite;}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,201,60,.55);}50%{box-shadow:0 0 0 14px rgba(255,201,60,0);}}
+.node-check{position:absolute;font-size:14px;background:var(--white);border-radius:50%;padding:2px;top:-4px;right:-4px;}
+.node-label{font-family:var(--font-display);font-weight:600;font-size:.8rem;text-align:center;color:var(--blue-deep);}
+@media (max-width:480px){.trail-row.left .node-wrap,.trail-row.right .node-wrap{transform:translateX(-30px);}.trail-row.right .node-wrap{transform:translateX(30px);}}
+
+/* Login */
+.login-card{max-width:380px;margin:50px auto;background:var(--white);border-radius:var(--radius);padding:32px 28px;box-shadow:0 10px 30px rgba(27,79,145,.12);text-align:center;}
+.login-card h2{color:var(--blue-deep);font-size:1.5rem;}
+.login-card p{color:#6B7A90;margin-top:6px;font-size:.9rem;}
+.role-pills{display:flex;gap:8px;margin:18px 0 6px;}
+.role-pill{flex:1;padding:10px;border-radius:10px;border:2px solid var(--line);font-weight:700;font-size:.78rem;color:var(--blue-deep);background:var(--white);}
+.role-pill.active{background:var(--blue-deep);color:var(--white);border-color:var(--blue-deep);}
+#login-form{margin-top:8px;display:flex;flex-direction:column;gap:10px;text-align:left;}
+#login-form label{font-weight:700;font-size:.82rem;color:var(--blue-deep);margin-top:6px;}
+#login-form input{padding:10px 12px;border:2px solid var(--line);border-radius:10px;}
+#login-form input:focus{border-color:var(--blue-mid);outline:none;}
+.error{color:var(--danger);font-size:.82rem;font-weight:700;}
+.hint{font-size:.75rem;color:#9AA9BE;margin-top:8px;}
+
+/* Buttons */
+.btn-primary{background:var(--blue-deep);color:var(--white);font-weight:800;padding:11px 20px;border-radius:12px;box-shadow:0 3px 0 #123B6E;transition:transform .1s;}
+.btn-primary:hover{transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(1px);box-shadow:0 1px 0 #123B6E;}
+.btn-ghost{background:var(--white);color:var(--blue-deep);font-weight:700;padding:10px 16px;border-radius:12px;border:2px solid var(--line);}
+.btn-ghost:hover{border-color:var(--blue-mid);}
+
+/* Admin */
+.admin-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:28px 4px 10px;}
+.admin-header h2{color:var(--blue-deep);}
+.admin-subtabs{display:flex;gap:6px;flex-wrap:wrap;padding:4px;background:var(--white);border-radius:12px;margin:6px 4px 18px;box-shadow:0 2px 8px rgba(27,79,145,.06);}
+.subtab{padding:9px 16px;border-radius:9px;font-weight:700;font-size:.85rem;color:var(--blue-deep);}
+.subtab.active{background:var(--blue-soft);}
+.admin-panel.hidden{display:none;}
+.panel-actions{padding:4px 4px 14px;}
+.admin-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;padding:6px 4px;}
+.quest-card{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:0 6px 18px rgba(27,79,145,.08);display:flex;flex-direction:column;gap:10px;}
+.quest-card-top{display:flex;align-items:center;gap:10px;}
+.quest-card-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.quest-card-icon.blue{background:var(--blue-soft);}
+.quest-card-icon.yellow{background:var(--yellow-soft);}
+.quest-card-title{font-family:var(--font-display);font-weight:700;color:var(--blue-deep);font-size:1rem;line-height:1.2;}
+.quest-card-meta{font-size:.78rem;color:#8393AA;}
+.quest-card-actions{display:flex;gap:8px;margin-top:auto;}
+.quest-card-actions button{flex:1;padding:8px;border-radius:9px;font-weight:700;font-size:.82rem;}
+.quest-card-actions .edit{background:var(--blue-soft);color:var(--blue-deep);}
+.quest-card-actions .del{background:#FDECEC;color:var(--danger);}
+.empty-state{text-align:center;padding:50px 10px;color:#7C8CA3;font-weight:700;grid-column:1/-1;}
+.settings-panel{background:var(--white);border-radius:var(--radius);padding:22px;margin-top:6px;max-width:440px;box-shadow:0 6px 18px rgba(27,79,145,.08);}
+.settings-panel h3{color:var(--blue-deep);margin-bottom:6px;}
+.muted{color:#8393AA;font-size:.85rem;margin-bottom:14px;}
+.upload-btn{display:inline-block;padding:10px 16px;border:2px dashed var(--blue-mid);border-radius:10px;color:var(--blue-deep);font-weight:700;cursor:pointer;font-size:.85rem;}
+.upload-btn:hover{background:var(--blue-soft);}
+.settings-field{margin-top:20px;}
+.settings-field label{display:block;font-weight:700;font-size:.82rem;color:var(--blue-deep);margin-bottom:6px;}
+.settings-field input{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;margin-bottom:8px;}
+
+/* Children roster */
+.lgpd-note{background:var(--yellow-soft);border:2px solid var(--yellow);color:#7A5A00;padding:12px 14px;border-radius:12px;font-size:.82rem;margin:4px 4px 18px;line-height:1.4;}
+.roster-form{display:flex;gap:8px;flex-wrap:wrap;padding:4px 4px 16px;align-items:center;}
+.roster-form input{padding:9px 12px;border:2px solid var(--line);border-radius:10px;flex:1;min-width:140px;}
+table.roster-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 14px rgba(27,79,145,.07);}
+table.roster-table th{background:var(--blue-soft);color:var(--blue-deep);text-align:left;padding:10px 14px;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em;}
+table.roster-table td{padding:10px 14px;border-top:1px solid var(--line);font-size:.9rem;}
+table.roster-table button{color:var(--danger);font-weight:700;font-size:.8rem;}
+
+/* Editor */
+.editor-toolbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:24px 4px 6px;}
+#quest-title{flex:1;min-width:220px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:1.05rem;font-weight:700;color:var(--blue-deep);}
+#quest-title:focus{border-color:var(--blue-mid);outline:none;}
+.editor-meta{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--blue-deep);}
+.editor-meta select{padding:8px;border-radius:10px;border:2px solid var(--line);font-size:1.1rem;}
+.color-swatches{display:flex;gap:6px;}
+.swatch{width:26px;height:26px;border-radius:50%;border:3px solid transparent;}
+.swatch.blue{background:var(--blue-deep);}
+.swatch.yellow{background:var(--yellow);}
+.swatch.active{border-color:var(--ink);}
+.block-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:14px 4px;}
+.block-toolbar button{background:var(--blue-soft);color:var(--blue-deep);font-weight:700;padding:8px 14px;border-radius:9px;font-size:.85rem;}
+.block-toolbar button:hover{background:var(--yellow-soft);}
+.canvas-hint{font-size:.78rem;color:#8393AA;margin-left:auto;}
+.canvas{position:relative;background:var(--white);border:2px dashed var(--blue-mid);border-radius:var(--radius);min-height:480px;width:100%;overflow:visible;}
+.canvas.viewer{border-style:solid;border-color:var(--line);min-height:420px;}
+@media (max-width:600px){.canvas{min-height:640px;}}
+.editor-footer{display:flex;justify-content:flex-end;gap:10px;padding:18px 4px 0;}
+
+.block{position:absolute;background:rgba(255,255,255,.97);border-radius:12px;box-shadow:0 4px 12px rgba(27,79,145,.12);min-width:70px;}
+.block-bar{display:flex;align-items:center;gap:6px;background:var(--blue-soft);border-radius:12px 12px 0 0;padding:3px 6px;}
+.drag-handle{cursor:grab;font-size:12px;color:var(--blue-mid);letter-spacing:1px;}
+.block-type-label{font-size:.66rem;font-weight:800;color:var(--blue-deep);text-transform:uppercase;letter-spacing:.04em;flex:1;}
+.block-del{font-size:16px;line-height:1;color:var(--danger);padding:2px 6px;font-weight:800;}
+.block-body{padding:10px;}
+.editable-text{min-height:1.4em;font-size:.9rem;line-height:1.4;outline:none;}
+.editable-text:empty:before{content:attr(data-ph);color:#B7C2D6;}
+.block-img-wrap{display:flex;align-items:center;justify-content:center;}
+.block-img-wrap img{max-width:100%;display:block;border-radius:8px;cursor:pointer;}
+.verse-ref{width:100%;border:none;border-bottom:2px solid var(--yellow);font-weight:800;font-size:.78rem;color:var(--blue-deep);text-transform:uppercase;letter-spacing:.03em;padding:3px 0;margin-bottom:4px;outline:none;background:transparent;}
+.verse-text{font-style:italic;font-size:.88rem;line-height:1.4;outline:none;}
+.verse-text:empty:before{content:attr(data-ph);color:#B7C2D6;font-style:italic;}
+.resize-handle{position:absolute;right:2px;bottom:2px;width:14px;height:14px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 50%,var(--blue-mid) 50%);border-radius:0 0 10px 0;}
+.file-card,.link-card{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--blue-soft);cursor:pointer;font-weight:700;font-size:.85rem;color:var(--blue-deep);border:2px dashed var(--blue-mid);word-break:break-word;}
+.link-card.video{background:var(--yellow-soft);border-color:var(--yellow);color:#7A5A00;}
+.link-card.empty{opacity:.6;cursor:default;}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(15,30,55,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;}
+.modal-card{background:var(--white);border-radius:20px;padding:26px;max-width:680px;width:100%;max-height:90vh;overflow:auto;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:popIn .25s ease both;}
+@keyframes popIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+.modal-close{position:absolute;top:14px;right:16px;font-size:22px;color:#8393AA;width:32px;height:32px;border-radius:50%;}
+.modal-close:hover{background:var(--blue-soft);color:var(--blue-deep);}
+#modal-title{color:var(--blue-deep);padding-right:30px;margin-bottom:14px;font-size:1.4rem;}
+#modal-done-btn{margin-top:18px;width:100%;}
+#modal-done-btn.done{background:#2E9E5B;box-shadow:0 3px 0 #1F7A44;}
+
+/* Toast + confetti */
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--ink);color:var(--white);padding:12px 20px;border-radius:12px;font-weight:700;font-size:.85rem;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:88vw;text-align:center;}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+.confetti-dot{position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:300;animation:confettiFly .7s ease-out forwards;}
+@keyframes confettiFly{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo-slot" id="logo-slot"><span id="logo-fallback">🧭</span><img id="logo-img" class="hidden" alt="Logo"></div>
+    <div class="brand-text">
+      <strong>SISBAB</strong>
+      <span data-i18n="brandTag">Aventuras que moldam o caráter</span>
+    </div>
+  </div>
+  <nav class="mode-tabs">
+    <button class="tab-btn active" data-view="kids" data-i18n="navKids">Área das Crianças</button>
+    <button class="tab-btn" data-view="team" data-i18n="navTeam">Equipe</button>
+  </nav>
+  <button id="site-link-btn" class="site-link-btn" data-i18n="siteBtnLabel">🔗 Site Oficial</button>
+  <button id="lang-toggle" class="lang-btn">PT <span class="sep">/</span> EN</button>
+</header>
+
+<main id="main">
+
+  <!-- KIDS -->
+  <section id="view-kids" class="view active">
+    <div class="kids-hero">
+      <div class="hero-bg" aria-hidden="true">
+        <div class="float-shape" style="width:120px;height:120px;background:var(--blue-mid);top:0;left:8%;animation-duration:12s;"></div>
+        <div class="float-shape" style="width:80px;height:80px;background:var(--yellow);top:40%;left:82%;animation-duration:9s;animation-delay:1s;"></div>
+        <div class="float-shape" style="width:60px;height:60px;background:var(--blue-deep);top:60%;left:18%;animation-duration:14s;animation-delay:2s;"></div>
+      </div>
+      <h1 data-i18n="kidsHeading">Sua trilha de aventuras</h1>
+      <p data-i18n="kidsSub">Toque em uma estrela para começar!</p>
+    </div>
+
+    <div id="avatar-builder" class="avatar-builder">
+      <h2 data-i18n="avatarHeading">Monte seu avatar!</h2>
+      <p class="muted" data-i18n="avatarSub">Escolha um personagem, uma cor e um acessório.</p>
+      <div class="avatar-preview" id="avatar-preview">
+        <span id="avatar-preview-base">🧒</span>
+        <span class="avatar-badge" id="avatar-preview-badge"></span>
+      </div>
+      <div class="avatar-row" id="avatar-bases"></div>
+      <div class="avatar-row" id="avatar-colors"></div>
+      <div class="avatar-row" id="avatar-accessories"></div>
+      <div class="avatar-actions">
+        <button id="avatar-skip-btn" class="btn-ghost" data-i18n="avatarSkip">Pular</button>
+        <button id="avatar-confirm-btn" class="btn-primary" data-i18n="avatarConfirm">Pronto, vamos lá!</button>
+      </div>
+    </div>
+
+    <div id="kids-trail-wrap" class="hidden">
+      <div style="text-align:center;">
+        <button id="change-avatar-btn" class="btn-ghost" data-i18n="changeAvatarBtn">🎨 Trocar avatar</button>
+      </div>
+      <div id="kids-avatar-chip-wrap" style="text-align:center;margin-top:10px;"></div>
+      <div class="trail" id="trail"></div>
+    </div>
+  </section>
+
+  <!-- LOGIN -->
+  <section id="view-login" class="view">
+    <div class="login-card">
+      <h2 data-i18n="loginTitle">Painel da Equipe</h2>
+      <p data-i18n="loginSub">Entre para acessar quests e treinamentos</p>
+      <div class="role-pills">
+        <button type="button" id="role-missionary" class="role-pill active" data-i18n="loginRoleMissionary">Sou Missionário(a)</button>
+        <button type="button" id="role-volunteer" class="role-pill" data-i18n="loginRoleVolunteer">Sou Voluntário(a)</button>
+      </div>
+      <form id="login-form">
+        <label data-i18n="usernameLabel">Usuário</label>
+        <input type="text" id="login-user" autocomplete="username">
+        <label data-i18n="passwordLabel">Senha</label>
+        <input type="password" id="login-pass" autocomplete="current-password">
+        <p class="error hidden" id="login-error" data-i18n="loginError">Usuário ou senha inválidos</p>
+        <button type="submit" class="btn-primary" data-i18n="loginBtn">Entrar</button>
+        <p class="hint" data-i18n="loginHint">Protótipo: usuário e senha = 123</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- MISSIONARY ADMIN -->
+  <section id="view-admin" class="view">
+    <div class="admin-header">
+      <h2 data-i18n="adminHeading">Painel do Missionário</h2>
+      <button id="logout-btn" class="btn-ghost" data-i18n="logoutBtn">Sair</button>
+    </div>
+    <div class="admin-subtabs">
+      <button class="subtab active" data-tab="quests" data-i18n="tabQuests">Quests</button>
+      <button class="subtab" data-tab="trainings" data-i18n="tabTrainings">Treinamentos</button>
+      <button class="subtab" data-tab="children" data-i18n="tabChildren">Crianças</button>
+      <button class="subtab" data-tab="settings" data-i18n="tabSettings">Configurações</button>
+    </div>
+
+    <div class="admin-panel" id="panel-quests">
+      <div class="panel-actions"><button id="new-quest-btn" class="btn-primary" data-i18n="newQuestBtn">+ Nova Quest</button></div>
+      <div class="admin-list" id="list-quests"></div>
+    </div>
+
+    <div class="admin-panel hidden" id="panel-trainings">
+      <div class="panel-actions"><button id="new-training-btn" class="btn-primary" data-i18n="newTrainingBtn">+ Novo Treinamento</button></div>
+      <div class="admin-list" id="list-trainings"></div>
+    </div>
+
+    <div class="admin-panel hidden" id="panel-children">
+      <p class="lgpd-note" data-i18n="childrenLgpdNote">⚠️ Dados de menores são sensíveis (LGPD). Em produção: acesso restrito, consentimento dos responsáveis e, se possível, integração com o sistema já existente em vez de duplicar dados.</p>
+      <div class="roster-form">
+        <input type="text" id="child-name-input" data-i18n-ph="childNamePh" placeholder="Nome">
+        <input type="text" id="child-group-input" data-i18n-ph="childGroupPh" placeholder="Turma/Grupo">
+        <button id="add-child-btn" class="btn-primary" data-i18n="addChildBtn">+ Adicionar</button>
+        <label class="upload-btn"><span data-i18n="importBtn">📥 Importar planilha (Excel/CSV)</span><input type="file" id="roster-file-input" accept=".csv,.xlsx,.xls" hidden></label>
+      </div>
+      <div id="children-table-wrap"></div>
+    </div>
+
+    <div class="admin-panel hidden" id="panel-settings">
+      <div class="settings-panel">
+        <h3 data-i18n="logoUploadLabel">Logo do projeto</h3>
+        <p class="muted" data-i18n="settingsNote">O logo enviado aparecerá no topo do site para todos.</p>
+        <label class="upload-btn"><span data-i18n="logoUploadBtn">Enviar logo</span><input type="file" id="logo-input" accept="image/*" hidden></label>
+        <div class="settings-field">
+          <label data-i18n="siteLinkLabel">Link do site principal</label>
+          <input type="url" id="site-url-input" data-i18n-ph="siteLinkPh" placeholder="https://...">
+          <button id="save-site-link-btn" class="btn-primary" data-i18n="saveLinkBtn">Salvar link</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOLUNTEER -->
+  <section id="view-volunteer" class="view">
+    <div class="admin-header">
+      <h2 data-i18n="volunteerHeading">Treinamentos disponíveis</h2>
+      <button id="volunteer-logout-btn" class="btn-ghost" data-i18n="logoutBtn">Sair</button>
+    </div>
+    <div class="admin-list" id="list-volunteer-trainings"></div>
+  </section>
+
+  <!-- EDITOR (shared: quests + trainings) -->
+  <section id="view-editor" class="view">
+    <div class="editor-toolbar">
+      <input type="text" id="quest-title" data-i18n-ph="editorTitlePlaceholder" placeholder="Título da quest">
+      <div class="editor-meta">
+        <label data-i18n="iconLabel">Ícone</label>
+        <select id="quest-icon"></select>
+        <label data-i18n="colorLabel">Cor</label>
+        <div class="color-swatches" id="color-swatches">
+          <button type="button" class="swatch blue active" data-color="blue"></button>
+          <button type="button" class="swatch yellow" data-color="yellow"></button>
+        </div>
+      </div>
+    </div>
+    <div class="block-toolbar">
+      <button id="add-text-btn" data-i18n="addTextBtn">+ Texto</button>
+      <button id="add-image-btn" data-i18n="addImageBtn">+ Imagem</button>
+      <button id="add-verse-btn" data-i18n="addVerseBtn">+ Versículo</button>
+      <button id="add-link-btn" data-i18n="addLinkBtn">+ Link</button>
+      <button id="add-pdf-btn" data-i18n="addPdfBtn">+ PDF</button>
+      <span class="canvas-hint" data-i18n="canvasHint">Arraste os blocos para posicioná-los</span>
+    </div>
+    <div class="canvas" id="editor-canvas"></div>
+    <div class="editor-footer">
+      <button id="cancel-edit-btn" class="btn-ghost" data-i18n="cancelBtn">Cancelar</button>
+      <button id="save-quest-btn" class="btn-primary" data-i18n="saveQuestBtn">Salvar</button>
+    </div>
+  </section>
+
+</main>
+
+<div id="quest-modal" class="modal hidden">
+  <div class="modal-card">
+    <button class="modal-close" id="modal-close" aria-label="Fechar">×</button>
+    <h2 id="modal-title"></h2>
+    <div id="modal-canvas" class="canvas viewer"></div>
+    <button id="modal-done-btn" class="btn-primary" data-i18n="markDone">Marcar como concluída</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* ================= i18n ================= */
+const DICT = {
+  pt:{
+    brandTag:"Aventuras que moldam o caráter",
+    navKids:"Área das Crianças", navTeam:"Equipe",
+    kidsHeading:"Sua trilha de aventuras", kidsSub:"Toque em uma estrela para começar!",
+    markDone:"Marcar como concluída", markTrainingDone:"Marcar como concluído", markDoneOn:"Concluído! ✔",
+    avatarHeading:"Monte seu avatar!", avatarSub:"Escolha um personagem, uma cor e um acessório.",
+    avatarConfirm:"Pronto, vamos lá!", avatarSkip:"Pular", changeAvatarBtn:"🎨 Trocar avatar",
+    loginTitle:"Painel da Equipe", loginSub:"Entre para acessar quests e treinamentos",
+    loginRoleMissionary:"Sou Missionário(a)", loginRoleVolunteer:"Sou Voluntário(a)",
+    usernameLabel:"Usuário", passwordLabel:"Senha", loginBtn:"Entrar",
+    loginHint:"Protótipo: usuário e senha = 123", loginError:"Usuário ou senha inválidos",
+    adminHeading:"Painel do Missionário", newQuestBtn:"+ Nova Quest", newTrainingBtn:"+ Novo Treinamento",
+    settingsTab:"Configurações", logoutBtn:"Sair",
+    tabQuests:"Quests", tabTrainings:"Treinamentos", tabChildren:"Crianças", tabSettings:"Configurações",
+    emptyQuests:"Nenhuma quest criada ainda. Crie a primeira aventura!",
+    volunteerHeading:"Treinamentos disponíveis", volunteerEmpty:"Nenhum treinamento disponível ainda.",
+    editBtn:"Editar", deleteBtn:"Excluir", viewBtn:"Ver", blocksCount:"blocos",
+    editorTitlePlaceholder:"Título da quest (ex: A Coragem de Davi)",
+    editorTitlePlaceholderTraining:"Título do treinamento (ex: Boas-vindas ao Time)",
+    iconLabel:"Ícone", colorLabel:"Cor",
+    addTextBtn:"+ Texto", addImageBtn:"+ Imagem", addVerseBtn:"+ Versículo", addLinkBtn:"+ Link", addPdfBtn:"+ PDF",
+    canvasHint:"Arraste os blocos para posicioná-los",
+    chooseImageBtn:"📷 Escolher imagem", choosePdfBtn:"📎 Anexar PDF",
+    verseRefPh:"Referência (ex: 1 Samuel 17)", verseTextPh:"Texto ou princípio bíblico...",
+    linkLabelPh:"Título do link (ex: Vídeo de boas-vindas)", linkUrlPh:"Cole aqui o link (URL)",
+    linkUndefined:"Link não definido", textPh:"Digite o texto...",
+    saveQuestBtn:"Salvar", cancelBtn:"Cancelar",
+    logoUploadLabel:"Logo do projeto", logoUploadBtn:"Enviar logo",
+    settingsNote:"O logo enviado aparecerá no topo do site para todos.",
+    siteLinkLabel:"Link do site principal", siteLinkPh:"https://...", saveLinkBtn:"Salvar link",
+    siteBtnLabel:"🔗 Site Oficial", siteNotConfigured:"Peça a um missionário para configurar o link em Configurações.",
+    siteLinkSaved:"Link salvo!",
+    deleteConfirm:"Tem certeza que deseja excluir?",
+    savedToast:"Salvo com sucesso!", deletedToast:"Excluído.", logoToast:"Logo atualizado!",
+    titleRequired:"Dê um título antes de salvar.",
+    blockText:"Texto", blockImage:"Imagem", blockVerse:"Versículo", blockPdf:"PDF", blockLink:"Link",
+    pdfTooLarge:"Arquivo muito grande (máx. 3MB neste protótipo). Use um link externo (bloco Link).",
+    childrenHeading:"Crianças cadastradas", addChildBtn:"+ Adicionar",
+    importBtn:"📥 Importar planilha (Excel/CSV)",
+    childNamePh:"Nome", childGroupPh:"Turma/Grupo",
+    childrenEmpty:"Nenhuma criança cadastrada. Importe uma planilha ou adicione manualmente.",
+    childrenLgpdNote:"⚠️ Dados de menores são sensíveis (LGPD). Em produção: acesso restrito, consentimento dos responsáveis e, se possível, integração com o sistema já existente em vez de duplicar dados.",
+    importedSuffix:"crianças importadas!", importEmptyToast:"Nenhum registro encontrado na planilha.",
+    importErrorToast:"Não foi possível importar. Verifique o arquivo."
+  },
+  en:{
+    brandTag:"Adventures that shape character",
+    navKids:"Kids Area", navTeam:"Team",
+    kidsHeading:"Your adventure trail", kidsSub:"Tap a star to begin!",
+    markDone:"Mark as done", markTrainingDone:"Mark as done", markDoneOn:"Done! ✔",
+    avatarHeading:"Build your avatar!", avatarSub:"Choose a character, a color, and an accessory.",
+    avatarConfirm:"All set, let's go!", avatarSkip:"Skip", changeAvatarBtn:"🎨 Change avatar",
+    loginTitle:"Team Panel", loginSub:"Sign in to access quests and trainings",
+    loginRoleMissionary:"I'm a Missionary", loginRoleVolunteer:"I'm a Volunteer",
+    usernameLabel:"Username", passwordLabel:"Password", loginBtn:"Sign in",
+    loginHint:"Prototype: username and password = 123", loginError:"Invalid username or password",
+    adminHeading:"Missionary Panel", newQuestBtn:"+ New Quest", newTrainingBtn:"+ New Training",
+    settingsTab:"Settings", logoutBtn:"Log out",
+    tabQuests:"Quests", tabTrainings:"Trainings", tabChildren:"Children", tabSettings:"Settings",
+    emptyQuests:"No quests yet. Create the first adventure!",
+    volunteerHeading:"Available trainings", volunteerEmpty:"No trainings available yet.",
+    editBtn:"Edit", deleteBtn:"Delete", viewBtn:"View", blocksCount:"blocks",
+    editorTitlePlaceholder:"Quest title (e.g., David's Courage)",
+    editorTitlePlaceholderTraining:"Training title (e.g., Welcome to the Team)",
+    iconLabel:"Icon", colorLabel:"Color",
+    addTextBtn:"+ Text", addImageBtn:"+ Image", addVerseBtn:"+ Verse", addLinkBtn:"+ Link", addPdfBtn:"+ PDF",
+    canvasHint:"Drag the blocks to position them",
+    chooseImageBtn:"📷 Choose image", choosePdfBtn:"📎 Attach PDF",
+    verseRefPh:"Reference (e.g., 1 Samuel 17)", verseTextPh:"Text or biblical principle...",
+    linkLabelPh:"Link title (e.g., Welcome video)", linkUrlPh:"Paste the link (URL) here",
+    linkUndefined:"Link not set", textPh:"Type the text...",
+    saveQuestBtn:"Save", cancelBtn:"Cancel",
+    logoUploadLabel:"Project logo", logoUploadBtn:"Upload logo",
+    settingsNote:"The uploaded logo will appear at the top of the site for everyone.",
+    siteLinkLabel:"Main website link", siteLinkPh:"https://...", saveLinkBtn:"Save link",
+    siteBtnLabel:"🔗 Official Site", siteNotConfigured:"Ask a missionary to set the link in Settings.",
+    siteLinkSaved:"Link saved!",
+    deleteConfirm:"Are you sure you want to delete this?",
+    savedToast:"Saved successfully!", deletedToast:"Deleted.", logoToast:"Logo updated!",
+    titleRequired:"Give it a title before saving.",
+    blockText:"Text", blockImage:"Image", blockVerse:"Verse", blockPdf:"PDF", blockLink:"Link",
+    pdfTooLarge:"File too large (max 3MB in this prototype). Use an external link (Link block).",
+    childrenHeading:"Registered children", addChildBtn:"+ Add",
+    importBtn:"📥 Import spreadsheet (Excel/CSV)",
+    childNamePh:"Name", childGroupPh:"Group/Class",
+    childrenEmpty:"No children registered yet. Import a spreadsheet or add manually.",
+    childrenLgpdNote:"⚠️ Minors' data is sensitive (LGPD/GDPR). In production: restrict access, obtain guardian consent, and ideally integrate with the existing system instead of duplicating data.",
+    importedSuffix:"children imported!", importEmptyToast:"No records found in the spreadsheet.",
+    importErrorToast:"Couldn't import. Please check the file."
+  }
+};
+function t(key){ return (DICT[state.lang] && DICT[state.lang][key]) ?? key; }
+
+/* ================= State ================= */
+const state = {
+  lang:'pt', loggedIn:false, role:null, currentView:'kids',
+  quests:[], trainings:[], childrenRoster:[], logo:null, siteUrl:'',
+  editingCollection:'quests', editingId:null, editorBlocks:[], zCounter:10,
+  completed:new Set(), trainingsCompleted:new Set(),
+  avatarConfirmed:false, avatar:null,
+  tempAvatar:{ base:'🧒', color:'#3E7CC9', accessory:'' },
+  adminTab:'quests'
+};
+const ICONS = ['🦁','⚔️','🌾','🤝','❤️','🕊️','⭐','🌟','🏔️','🌊','📖','🙏'];
+const AVATAR_BASES = ['🧒','👦','👧','🦁','🐻','🦊','🐱','🐧'];
+const AVATAR_COLORS = ['#3E7CC9','#FFC93C','#EAF2FF'];
+const AVATAR_ACCESSORIES = ['','⭐','🎩','🕶️','👑','🎀'];
+
+/* ================= Storage helpers ================= */
+const STORE = {
+  async get(key, shared){ try{ const r = await window.storage.get(key, shared); return r ? r.value : null; }catch(e){ return null; } },
+  async set(key, value, shared){ try{ await window.storage.set(key, value, shared); return true; }catch(e){ return false; } }
+};
+
+/* ================= Seed data (inline SVG, no external assets) ================= */
+function svgIcon(bg, shape){
+  return 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100" fill="${bg}"/>${shape}</svg>`);
+}
+const SHIELD = svgIcon('#1B4F91', '<path d="M100 40 L150 62 L150 108 Q150 150 100 172 Q50 150 50 108 L50 62 Z" fill="#FFFFFF"/><circle cx="100" cy="106" r="14" fill="#FFC93C"/>');
+const WHEAT  = svgIcon('#FFC93C', '<g stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"><line x1="70" y1="150" x2="70" y2="70"/><line x1="100" y1="160" x2="100" y2="60"/><line x1="130" y1="150" x2="130" y2="70"/></g><circle cx="70" cy="60" r="10" fill="#FFFFFF"/><circle cx="100" cy="50" r="10" fill="#FFFFFF"/><circle cx="130" cy="60" r="10" fill="#FFFFFF"/>');
+const HEART  = svgIcon('#3E7CC9', '<path d="M100 160 C40 120 40 70 80 60 C95 56 100 75 100 75 C100 75 105 56 120 60 C160 70 160 120 100 160 Z" fill="#FFFFFF"/>');
+const BOOK   = svgIcon('#1B4F91', '<rect x="55" y="55" width="90" height="95" rx="6" fill="#FFFFFF"/><line x1="100" y1="55" x2="100" y2="150" stroke="#FFC93C" stroke-width="6"/><line x1="68" y1="75" x2="88" y2="75" stroke="#1B4F91" stroke-width="5" stroke-linecap="round"/><line x1="68" y1="92" x2="88" y2="92" stroke="#1B4F91" stroke-width="5" stroke-linecap="round"/><line x1="112" y1="75" x2="132" y2="75" stroke="#1B4F91" stroke-width="5" stroke-linecap="round"/><line x1="112" y1="92" x2="132" y2="92" stroke="#1B4F91" stroke-width="5" stroke-linecap="round"/>');
+
+function seedQuests(){
+  return [
+    { id:'q_seed_1', icon:'🦁', color:'blue', title:'A Coragem de Davi',
+      blocks:[
+        {id:'b1',type:'text',x:5,y:6,w:58,content:'Davi era só um jovem pastor, mas confiava que Deus estava com ele. Quando ninguém teve coragem de enfrentar o gigante Golias, Davi deu um passo à frente.'},
+        {id:'b2',type:'image',x:66,y:6,w:28,imgSrc:SHIELD},
+        {id:'b3',type:'verse',x:5,y:46,w:90,verseRef:'Princípio de 1 Samuel 17',verseText:'A verdadeira coragem não é a ausência de medo, mas confiar em Deus mesmo diante do gigante.'},
+        {id:'b4',type:'text',x:5,y:78,w:90,content:'Reflita: que situação você já viveu em que precisou de coragem?'}
+      ]},
+    { id:'q_seed_2', icon:'🌾', color:'yellow', title:'O Perdão de José',
+      blocks:[
+        {id:'b1',type:'text',x:5,y:6,w:58,content:'José foi tratado com injustiça pelos próprios irmãos, mas anos depois escolheu perdoar em vez de se vingar. Seu coração generoso mudou a história de toda a família.'},
+        {id:'b2',type:'image',x:66,y:6,w:28,imgSrc:WHEAT},
+        {id:'b3',type:'verse',x:5,y:46,w:90,verseRef:'Princípio de Gênesis 45',verseText:'Mesmo depois de sofrer injustiça, José escolheu enxergar um propósito maior e perdoar de coração aberto.'},
+        {id:'b4',type:'text',x:5,y:78,w:90,content:'Reflita: existe alguém que você precisa perdoar hoje?'}
+      ]},
+    { id:'q_seed_3', icon:'❤️', color:'blue', title:'Rute e Noemi',
+      blocks:[
+        {id:'b1',type:'text',x:5,y:6,w:58,content:'Rute escolheu não abandonar Noemi mesmo diante das dificuldades. Sua lealdade mostra o valor de cuidar de quem amamos, mesmo quando é difícil.'},
+        {id:'b2',type:'image',x:66,y:6,w:28,imgSrc:HEART},
+        {id:'b3',type:'verse',x:5,y:46,w:90,verseRef:'Princípio de Rute 1',verseText:'A amizade verdadeira permanece firme nos momentos difíceis, não apenas nos fáceis.'},
+        {id:'b4',type:'text',x:5,y:78,w:90,content:'Reflita: como você pode ser um bom amigo esta semana?'}
+      ]}
+  ];
+}
+function seedTrainings(){
+  return [
+    { id:'t_seed_1', icon:'🤝', color:'blue', title:'Boas-vindas ao Time de Voluntários',
+      blocks:[
+        {id:'b1',type:'text',x:5,y:6,w:90,content:'Bem-vindo(a) ao time! Este treinamento rápido apresenta os princípios básicos para acolher e cuidar das crianças durante as quests.'},
+        {id:'b2',type:'link',x:5,y:38,w:44,label:'Vídeo de boas-vindas (exemplo)',url:'https://www.youtube.com/'},
+        {id:'b3',type:'text',x:53,y:38,w:42,content:'Dica: chegue 10 minutos antes, cumprimente cada criança pelo nome e mantenha um tom de voz calmo e acolhedor.'}
+      ]},
+    { id:'t_seed_2', icon:'📖', color:'yellow', title:'Como Conduzir uma Quest com as Crianças',
+      blocks:[
+        {id:'b1',type:'text',x:5,y:6,w:58,content:'Cada quest tem um princípio central. Leia com antecedência e pense em uma pergunta simples para engajar o grupo antes de começar.'},
+        {id:'b2',type:'image',x:66,y:6,w:28,imgSrc:BOOK},
+        {id:'b3',type:'text',x:5,y:44,w:90,content:'Encerre sempre com o momento de reflexão: deixe as crianças falarem antes de você. Ouvir é parte do ensino.'}
+      ]}
+  ];
+}
+
+/* ================= Utils ================= */
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>el.classList.remove('show'), 2400);
+}
+function confettiBurst(x,y){
+  const colors=['#1B4F91','#3E7CC9','#FFC93C','#FFFFFF'];
+  for(let i=0;i<16;i++){
+    const dot=document.createElement('span');
+    dot.className='confetti-dot';
+    const angle=Math.random()*Math.PI*2, dist=40+Math.random()*60;
+    dot.style.setProperty('--dx', Math.cos(angle)*dist+'px');
+    dot.style.setProperty('--dy', Math.sin(angle)*dist+'px');
+    dot.style.background=colors[i%colors.length];
+    dot.style.left=x+'px'; dot.style.top=y+'px';
+    document.body.appendChild(dot);
+    setTimeout(()=>dot.remove(),750);
+  }
+}
+
+/* ================= View switching ================= */
+function switchView(name){
+  state.currentView = name;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active','view-enter'));
+  const el = document.getElementById('view-'+name);
+  el.classList.add('active');
+  void el.offsetWidth;
+  el.classList.add('view-enter');
+
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  if(name==='kids') document.querySelector('.tab-btn[data-view="kids"]').classList.add('active');
+  else document.querySelector('.tab-btn[data-view="team"]').classList.add('active');
+
+  if(name==='kids'){
+    if(!state.avatarConfirmed){
+      document.getElementById('avatar-builder').classList.remove('hidden');
+      document.getElementById('kids-trail-wrap').classList.add('hidden');
+      renderAvatarBuilder();
+    } else { showKidsTrail(); }
+  }
+  if(name==='admin'){ setAdminTab(state.adminTab||'quests'); }
+  if(name==='volunteer'){ renderCollectionList('trainings','list-volunteer-trainings', true); }
+}
+
+/* ================= i18n apply ================= */
+function applyI18n(){
+  document.documentElement.lang = state.lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+  if(state.currentView==='kids'){
+    if(state.avatarConfirmed){ renderTrail(); renderKidsAvatarChip(); } else { renderAvatarBuilder(); }
+  }
+  if(state.currentView==='admin'){ setAdminTab(state.adminTab); }
+  if(state.currentView==='volunteer'){ renderCollectionList('trainings','list-volunteer-trainings', true); }
+}
+
+/* ================= Avatar builder ================= */
+function renderAvatarBuilder(){
+  const basesWrap=document.getElementById('avatar-bases');
+  basesWrap.innerHTML = AVATAR_BASES.map(b=>`<button type="button" class="avatar-opt ${state.tempAvatar.base===b?'active':''}" data-base="${b}">${b}</button>`).join('');
+  basesWrap.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', ()=>{ state.tempAvatar.base=btn.dataset.base; renderAvatarBuilder(); }));
+
+  const colorsWrap=document.getElementById('avatar-colors');
+  colorsWrap.innerHTML = AVATAR_COLORS.map(c=>`<button type="button" class="avatar-color ${state.tempAvatar.color===c?'active':''}" data-color="${c}" style="background:${c};"></button>`).join('');
+  colorsWrap.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', ()=>{ state.tempAvatar.color=btn.dataset.color; renderAvatarBuilder(); }));
+
+  const accWrap=document.getElementById('avatar-accessories');
+  accWrap.innerHTML = AVATAR_ACCESSORIES.map(a=>`<button type="button" class="avatar-opt ${state.tempAvatar.accessory===a?'active':''}" data-acc="${a}">${a||'🚫'}</button>`).join('');
+  accWrap.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', ()=>{ state.tempAvatar.accessory = btn.dataset.acc==='🚫' ? '' : btn.dataset.acc; renderAvatarBuilder(); }));
+
+  document.getElementById('avatar-preview').style.background = state.tempAvatar.color;
+  document.getElementById('avatar-preview-base').textContent = state.tempAvatar.base;
+  document.getElementById('avatar-preview-badge').textContent = state.tempAvatar.accessory;
+}
+document.getElementById('avatar-confirm-btn').addEventListener('click', ()=>{
+  state.avatar = {...state.tempAvatar};
+  state.avatarConfirmed = true;
+  showKidsTrail();
+});
+document.getElementById('avatar-skip-btn').addEventListener('click', ()=>{
+  state.avatar = null;
+  state.avatarConfirmed = true;
+  showKidsTrail();
+});
+document.getElementById('change-avatar-btn').addEventListener('click', ()=>{
+  state.avatarConfirmed = false;
+  document.getElementById('avatar-builder').classList.remove('hidden');
+  document.getElementById('kids-trail-wrap').classList.add('hidden');
+  renderAvatarBuilder();
+});
+function showKidsTrail(){
+  document.getElementById('avatar-builder').classList.add('hidden');
+  document.getElementById('kids-trail-wrap').classList.remove('hidden');
+  renderKidsAvatarChip();
+  renderTrail();
+}
+function renderKidsAvatarChip(){
+  const wrap = document.getElementById('kids-avatar-chip-wrap');
+  if(state.avatar){
+    wrap.innerHTML = `<span class="kids-avatar-chip"><span class="mini-avatar" style="background:${state.avatar.color};">${state.avatar.base}</span>${state.avatar.accessory||''}</span>`;
+  } else { wrap.innerHTML=''; }
+}
+
+/* ================= Kids trail ================= */
+function renderTrail(){
+  const trail = document.getElementById('trail');
+  trail.innerHTML = '';
+  if(state.quests.length===0){ trail.innerHTML = `<p class="empty-state">${t('emptyQuests')}</p>`; return; }
+  const currentItem = state.quests.find(q=>!state.completed.has(q.id));
+  const currentId = currentItem ? currentItem.id : null;
+  state.quests.forEach((q, i)=>{
+    const row = document.createElement('div');
+    row.className = 'trail-row ' + (i%2===0 ? 'left':'right');
+    const done = state.completed.has(q.id);
+    const isCurrent = q.id===currentId;
+    row.innerHTML = `
+      <div class="node-wrap">
+        <button class="node ${q.color} ${isCurrent?'current':''}" data-id="${q.id}" aria-label="${escapeHtml(q.title)}">
+          <span>${q.icon}</span>
+          ${done ? '<span class="node-check">✓</span>' : ''}
+        </button>
+        <div class="node-label">${escapeHtml(q.title)}</div>
+      </div>`;
+    trail.appendChild(row);
+  });
+  trail.querySelectorAll('.node').forEach(btn=>{
+    btn.addEventListener('click', ()=> openItemModal('quests', btn.dataset.id));
+  });
+  const rows = trail.querySelectorAll('.trail-row');
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in-view'); io.unobserve(en.target); } });
+    }, {threshold:.2});
+    rows.forEach(r=>io.observe(r));
+  } else { rows.forEach(r=>r.classList.add('in-view')); }
+}
+
+/* ================= Canvas block rendering (view mode) ================= */
+function renderCanvasBlocks(container, blocks){
+  container.innerHTML = '';
+  blocks.forEach(b=>{
+    const el = document.createElement('div');
+    el.className = 'block';
+    el.style.left=b.x+'%'; el.style.top=b.y+'%'; el.style.width=b.w+'%';
+    if(b.type==='text'){
+      el.innerHTML = `<div class="block-body"><p style="font-size:.92rem;line-height:1.5;">${escapeHtml(b.content||'')}</p></div>`;
+    } else if(b.type==='image'){
+      el.innerHTML = `<div class="block-body block-img-wrap">${b.imgSrc?`<img src="${b.imgSrc}" alt="">`:''}</div>`;
+    } else if(b.type==='verse'){
+      el.innerHTML = `<div class="block-body"><div style="font-weight:800;font-size:.72rem;color:var(--blue-deep);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;">${escapeHtml(b.verseRef||'')}</div><div style="font-style:italic;font-size:.9rem;line-height:1.5;">${escapeHtml(b.verseText||'')}</div></div>`;
+    } else if(b.type==='pdf'){
+      el.innerHTML = `<div class="block-body"><div class="file-card">📄 <span>${escapeHtml(b.fileName || t('blockPdf'))}</span></div></div>`;
+    } else if(b.type==='link'){
+      const isVideo = /youtu|vimeo/i.test(b.url||'');
+      el.innerHTML = `<div class="block-body"><div class="link-card ${isVideo?'video':''} ${!b.url?'empty':''}">${isVideo?'🎥':'🔗'} <span>${escapeHtml(b.label || (b.url? t('blockLink') : t('linkUndefined')))}</span></div></div>`;
+    }
+    container.appendChild(el);
+    const fc = el.querySelector('.file-card');
+    if(fc && b.dataUrl){ fc.addEventListener('click', ()=> window.open(b.dataUrl,'_blank','noopener')); }
+    const lc = el.querySelector('.link-card');
+    if(lc && b.url){ lc.addEventListener('click', ()=> window.open(b.url,'_blank','noopener')); }
+  });
+}
+
+/* ================= Item modal (quests + trainings) ================= */
+function openItemModal(collection, id){
+  const item = state[collection].find(x=>x.id===id);
+  if(!item) return;
+  document.getElementById('modal-title').textContent = item.icon + '  ' + item.title;
+  renderCanvasBlocks(document.getElementById('modal-canvas'), item.blocks);
+  const doneBtn = document.getElementById('modal-done-btn');
+  const completedSet = collection==='quests' ? state.completed : state.trainingsCompleted;
+  const isDone = completedSet.has(item.id);
+  doneBtn.textContent = isDone ? t('markDoneOn') : (collection==='quests' ? t('markDone') : t('markTrainingDone'));
+  doneBtn.classList.toggle('done', isDone);
+  doneBtn.onclick = ()=>{
+    const willBeDone = !completedSet.has(item.id);
+    if(willBeDone){
+      completedSet.add(item.id);
+      const r = doneBtn.getBoundingClientRect();
+      confettiBurst(r.left + r.width/2, r.top + r.height/2);
+    } else { completedSet.delete(item.id); }
+    openItemModal(collection, item.id);
+    if(collection==='quests') renderTrail();
+  };
+  document.getElementById('quest-modal').classList.remove('hidden');
+}
+document.getElementById('modal-close').addEventListener('click', ()=>{ document.getElementById('quest-modal').classList.add('hidden'); });
+document.getElementById('quest-modal').addEventListener('click', e=>{ if(e.target.id==='quest-modal') e.currentTarget.classList.add('hidden'); });
+
+/* ================= Login ================= */
+let selectedRole = 'missionary';
+document.getElementById('role-missionary').addEventListener('click', ()=>{
+  selectedRole='missionary';
+  document.getElementById('role-missionary').classList.add('active');
+  document.getElementById('role-volunteer').classList.remove('active');
+});
+document.getElementById('role-volunteer').addEventListener('click', ()=>{
+  selectedRole='volunteer';
+  document.getElementById('role-volunteer').classList.add('active');
+  document.getElementById('role-missionary').classList.remove('active');
+});
+document.getElementById('login-form').addEventListener('submit', e=>{
+  e.preventDefault();
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value.trim();
+  const err = document.getElementById('login-error');
+  if(u==='123' && p==='123'){
+    state.loggedIn = true; state.role = selectedRole; err.classList.add('hidden');
+    document.getElementById('login-user').value=''; document.getElementById('login-pass').value='';
+    switchView(state.role==='missionary' ? 'admin' : 'volunteer');
+  } else { err.classList.remove('hidden'); }
+});
+document.getElementById('logout-btn').addEventListener('click', ()=>{ state.loggedIn=false; state.role=null; switchView('kids'); });
+document.getElementById('volunteer-logout-btn').addEventListener('click', ()=>{ state.loggedIn=false; state.role=null; switchView('kids'); });
+
+/* ================= Admin subtabs ================= */
+function setAdminTab(tab){
+  state.adminTab = tab;
+  document.querySelectorAll('.subtab').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.add('hidden'));
+  document.getElementById('panel-'+tab).classList.remove('hidden');
+  if(tab==='quests') renderCollectionList('quests','list-quests', false);
+  if(tab==='trainings') renderCollectionList('trainings','list-trainings', false);
+  if(tab==='children') renderChildren();
+  if(tab==='settings') document.getElementById('site-url-input').value = state.siteUrl||'';
+}
+document.querySelectorAll('.subtab').forEach(b=> b.addEventListener('click', ()=> setAdminTab(b.dataset.tab)));
+
+/* ================= Collection list (quests/trainings) ================= */
+function renderCollectionList(collection, containerId, readonly){
+  const list = document.getElementById(containerId);
+  const items = state[collection];
+  if(items.length===0){
+    list.innerHTML = `<p class="empty-state">${collection==='quests' ? t('emptyQuests') : t('volunteerEmpty')}</p>`;
+    return;
+  }
+  list.innerHTML = '';
+  items.forEach(item=>{
+    const card = document.createElement('div');
+    card.className = 'quest-card';
+    card.innerHTML = `
+      <div class="quest-card-top">
+        <div class="quest-card-icon ${item.color}">${item.icon}</div>
+        <div>
+          <div class="quest-card-title">${escapeHtml(item.title)}</div>
+          <div class="quest-card-meta">${item.blocks.length} ${t('blocksCount')}</div>
+        </div>
+      </div>
+      <div class="quest-card-actions"></div>`;
+    const actions = card.querySelector('.quest-card-actions');
+    if(readonly){
+      const viewBtn = document.createElement('button');
+      viewBtn.className='edit'; viewBtn.style.flex='1'; viewBtn.textContent=t('viewBtn');
+      viewBtn.addEventListener('click', ()=> openItemModal(collection, item.id));
+      actions.appendChild(viewBtn);
+    } else {
+      const editBtn = document.createElement('button'); editBtn.className='edit'; editBtn.textContent=t('editBtn');
+      editBtn.addEventListener('click', ()=> openEditor(collection, item.id));
+      const delBtn = document.createElement('button'); delBtn.className='del'; delBtn.textContent=t('deleteBtn');
+      delBtn.addEventListener('click', async ()=>{
+        if(confirm(t('deleteConfirm'))){
+          state[collection] = state[collection].filter(x=>x.id!==item.id);
+          await STORE.set(collection, JSON.stringify(state[collection]), true);
+          renderCollectionList(collection, containerId, readonly);
+          toast(t('deletedToast'));
+        }
+      });
+      actions.append(editBtn, delBtn);
+    }
+    list.appendChild(card);
+  });
+}
+document.getElementById('new-quest-btn').addEventListener('click', ()=> openEditor('quests', null));
+document.getElementById('new-training-btn').addEventListener('click', ()=> openEditor('trainings', null));
+
+/* ================= Children roster ================= */
+function renderChildren(){
+  const wrap = document.getElementById('children-table-wrap');
+  if(state.childrenRoster.length===0){ wrap.innerHTML = `<p class="empty-state">${t('childrenEmpty')}</p>`; return; }
+  wrap.innerHTML = `<table class="roster-table"><thead><tr><th>${t('childNamePh')}</th><th>${t('childGroupPh')}</th><th></th></tr></thead><tbody>${
+    state.childrenRoster.map(c=>`<tr><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.group||'—')}</td><td><button data-id="${c.id}" class="del-child">${t('deleteBtn')}</button></td></tr>`).join('')
+  }</tbody></table>`;
+  wrap.querySelectorAll('.del-child').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      state.childrenRoster = state.childrenRoster.filter(c=>c.id!==btn.dataset.id);
+      await STORE.set('children-roster', JSON.stringify(state.childrenRoster), true);
+      renderChildren();
+    });
+  });
+}
+document.getElementById('add-child-btn').addEventListener('click', async ()=>{
+  const nameEl = document.getElementById('child-name-input');
+  const groupEl = document.getElementById('child-group-input');
+  const nm = nameEl.value.trim();
+  if(!nm) return;
+  state.childrenRoster.push({ id:'c_'+Date.now(), name:nm, group:groupEl.value.trim() });
+  await STORE.set('children-roster', JSON.stringify(state.childrenRoster), true);
+  nameEl.value=''; groupEl.value='';
+  renderChildren();
+});
+function parseRosterFile(file){
+  return new Promise((resolve, reject)=>{
+    const name = file.name.toLowerCase();
+    const reader = new FileReader();
+    reader.onerror = ()=> reject(new Error('read-error'));
+    if(name.endsWith('.csv')){
+      reader.onload = ()=>{
+        try{
+          const lines = String(reader.result).split(/\r?\n/).filter(l=>l.trim().length);
+          if(lines.length===0){ resolve([]); return; }
+          const headers = lines[0].split(',').map(h=>h.trim().toLowerCase());
+          let nameIdx = headers.findIndex(h=>h.includes('nome')||h.includes('name'));
+          let groupIdx = headers.findIndex(h=>h.includes('turma')||h.includes('grupo')||h.includes('group')||h.includes('class'));
+          if(nameIdx===-1) nameIdx=0;
+          if(groupIdx===-1) groupIdx=1;
+          const records=[];
+          for(let i=1;i<lines.length;i++){
+            const cols = lines[i].split(',');
+            const nm = (cols[nameIdx]||'').trim();
+            if(!nm) continue;
+            records.push({ id:'c_'+Date.now()+'_'+i, name:nm, group:(cols[groupIdx]||'').trim() });
+          }
+          resolve(records);
+        }catch(e){ reject(e); }
+      };
+      reader.readAsText(file);
+    } else {
+      reader.onload = ()=>{
+        try{
+          if(typeof XLSX==='undefined'){ reject(new Error('no-xlsx')); return; }
+          const data = new Uint8Array(reader.result);
+          const wb = XLSX.read(data,{type:'array'});
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet,{header:1});
+          if(rows.length===0){ resolve([]); return; }
+          const headers = rows[0].map(h=>String(h||'').trim().toLowerCase());
+          let nameIdx = headers.findIndex(h=>h.includes('nome')||h.includes('name'));
+          let groupIdx = headers.findIndex(h=>h.includes('turma')||h.includes('grupo')||h.includes('group')||h.includes('class'));
+          if(nameIdx===-1) nameIdx=0;
+          if(groupIdx===-1) groupIdx=1;
+          const records=[];
+          for(let i=1;i<rows.length;i++){
+            const row=rows[i]||[];
+            const nm = String(row[nameIdx]||'').trim();
+            if(!nm) continue;
+            records.push({ id:'c_'+Date.now()+'_'+i, name:nm, group:String(row[groupIdx]||'').trim() });
+          }
+          resolve(records);
+        }catch(e){ reject(e); }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  });
+}
+document.getElementById('roster-file-input').addEventListener('change', async e=>{
+  const f = e.target.files[0]; if(!f) return;
+  try{
+    const records = await parseRosterFile(f);
+    if(records.length===0){ toast(t('importEmptyToast')); }
+    else {
+      state.childrenRoster = state.childrenRoster.concat(records);
+      await STORE.set('children-roster', JSON.stringify(state.childrenRoster), true);
+      renderChildren();
+      toast(records.length + ' ' + t('importedSuffix'));
+    }
+  }catch(err){ toast(t('importErrorToast')); }
+  e.target.value='';
+});
+
+/* ================= Settings (logo + site link) ================= */
+document.getElementById('logo-input').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = async ()=>{
+    state.logo = reader.result;
+    document.getElementById('logo-img').src = state.logo;
+    document.getElementById('logo-img').classList.remove('hidden');
+    document.getElementById('logo-fallback').classList.add('hidden');
+    await STORE.set('app-logo', state.logo, true);
+    toast(t('logoToast'));
+  };
+  reader.readAsDataURL(f);
+});
+document.getElementById('save-site-link-btn').addEventListener('click', async ()=>{
+  const val = document.getElementById('site-url-input').value.trim();
+  state.siteUrl = val;
+  await STORE.set('site-url', val, true);
+  toast(t('siteLinkSaved'));
+});
+document.getElementById('site-link-btn').addEventListener('click', ()=>{
+  if(state.siteUrl){ window.open(state.siteUrl, '_blank', 'noopener'); }
+  else { toast(t('siteNotConfigured')); }
+});
+
+/* ================= Editor (shared quests + trainings) ================= */
+function populateIconSelect(){
+  const sel = document.getElementById('quest-icon');
+  sel.innerHTML = ICONS.map(i=>`<option value="${i}">${i}</option>`).join('');
+}
+document.querySelectorAll('.swatch').forEach(sw=>{
+  sw.addEventListener('click', ()=>{
+    document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    sw.classList.add('active');
+  });
+});
+function selectedColor(){ return document.querySelector('.swatch.active').dataset.color; }
+function setSelectedColor(color){ document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('active', s.dataset.color===color)); }
+
+function openEditor(collection, id){
+  state.editingCollection = collection;
+  state.editingId = id;
+  const canvas = document.getElementById('editor-canvas');
+  canvas.innerHTML = '';
+  const titleInput = document.getElementById('quest-title');
+  if(id){
+    const item = state[collection].find(x=>x.id===id);
+    titleInput.value = item.title;
+    document.getElementById('quest-icon').value = item.icon;
+    setSelectedColor(item.color);
+    state.editorBlocks = item.blocks.map(b=>({...b}));
+  } else {
+    titleInput.value = '';
+    document.getElementById('quest-icon').value = ICONS[0];
+    setSelectedColor('blue');
+    state.editorBlocks = [];
+  }
+  titleInput.placeholder = collection==='quests' ? t('editorTitlePlaceholder') : t('editorTitlePlaceholderTraining');
+  state.editorBlocks.forEach(b => canvas.appendChild(buildBlockEl(b)));
+  switchView('editor');
+}
+
+function blockLabel(type){
+  return { text:t('blockText'), image:t('blockImage'), verse:t('blockVerse'), pdf:t('blockPdf'), link:t('blockLink') }[type] || type;
+}
+
+function buildBlockEl(b){
+  const el = document.createElement('div');
+  el.className = 'block';
+  el.style.left=b.x+'%'; el.style.top=b.y+'%'; el.style.width=b.w+'%';
+
+  const bar = document.createElement('div');
+  bar.className = 'block-bar';
+  const handle = document.createElement('span'); handle.className='drag-handle'; handle.textContent='⠿⠿';
+  const label = document.createElement('span'); label.className='block-type-label'; label.textContent = blockLabel(b.type);
+  const del = document.createElement('button'); del.className='block-del'; del.textContent='×';
+  del.addEventListener('click', ()=>{ el.remove(); state.editorBlocks = state.editorBlocks.filter(x=>x.id!==b.id); });
+  bar.append(handle, label, del);
+  el.appendChild(bar);
+
+  const body = document.createElement('div');
+  body.className = 'block-body';
+
+  if(b.type==='text'){
+    const ed = document.createElement('div');
+    ed.className='editable-text'; ed.contentEditable='true'; ed.setAttribute('data-ph', t('textPh'));
+    ed.innerText = b.content || '';
+    ed.addEventListener('input', ()=>{ b.content = ed.innerText; });
+    body.appendChild(ed);
+  } else if(b.type==='image'){
+    body.classList.add('block-img-wrap');
+    renderImageBody(body, b);
+  } else if(b.type==='verse'){
+    const ref = document.createElement('input');
+    ref.className='verse-ref'; ref.placeholder=t('verseRefPh'); ref.value=b.verseRef||'';
+    ref.addEventListener('input', ()=>{ b.verseRef = ref.value; });
+    const vtext = document.createElement('div');
+    vtext.className='verse-text'; vtext.contentEditable='true'; vtext.setAttribute('data-ph', t('verseTextPh'));
+    vtext.innerText = b.verseText || '';
+    vtext.addEventListener('input', ()=>{ b.verseText = vtext.innerText; });
+    body.append(ref, vtext);
+  } else if(b.type==='pdf'){
+    body.classList.add('block-img-wrap');
+    renderPdfBody(body, b);
+  } else if(b.type==='link'){
+    renderLinkBody(body, b);
+  }
+  el.appendChild(body);
+
+  const resize = document.createElement('div'); resize.className='resize-handle';
+  el.appendChild(resize);
+
+  attachDrag(handle, el, b);
+  attachResize(resize, el, b);
+  return el;
+}
+
+function renderImageBody(body, b){
+  body.innerHTML = '';
+  if(b.imgSrc){
+    const img = document.createElement('img'); img.src=b.imgSrc; img.title=t('chooseImageBtn');
+    img.addEventListener('click', ()=> triggerImageUpload(body,b));
+    body.appendChild(img);
+  } else {
+    const label = document.createElement('label'); label.className='upload-btn';
+    label.innerHTML = `<span>${t('chooseImageBtn')}</span>`;
+    const input = document.createElement('input'); input.type='file'; input.accept='image/*'; input.hidden=true;
+    input.addEventListener('change', e=>{
+      const f=e.target.files[0]; if(!f) return;
+      const reader=new FileReader();
+      reader.onload=()=>{ b.imgSrc=reader.result; renderImageBody(body,b); };
+      reader.readAsDataURL(f);
+    });
+    label.appendChild(input);
+    body.appendChild(label);
+  }
+}
+function triggerImageUpload(body,b){
+  const input=document.createElement('input'); input.type='file'; input.accept='image/*';
+  input.addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const reader=new FileReader();
+    reader.onload=()=>{ b.imgSrc=reader.result; renderImageBody(body,b); };
+    reader.readAsDataURL(f);
+  });
+  input.click();
+}
+function renderPdfBody(body, b){
+  body.innerHTML = '';
+  if(b.dataUrl){
+    const card = document.createElement('div'); card.className='file-card';
+    card.innerHTML = `<span>📄</span><span>${escapeHtml(b.fileName||'PDF')}</span>`;
+    card.addEventListener('click', ()=> triggerPdfUpload(body,b));
+    body.appendChild(card);
+  } else {
+    const label = document.createElement('label'); label.className='upload-btn';
+    label.innerHTML = `<span>${t('choosePdfBtn')}</span>`;
+    const input = document.createElement('input'); input.type='file'; input.accept='application/pdf'; input.hidden=true;
+    input.addEventListener('change', e=>{
+      const f=e.target.files[0]; if(!f) return;
+      if(f.size > 3*1024*1024){ toast(t('pdfTooLarge')); return; }
+      const reader=new FileReader();
+      reader.onload=()=>{ b.dataUrl=reader.result; b.fileName=f.name; renderPdfBody(body,b); };
+      reader.readAsDataURL(f);
+    });
+    label.appendChild(input);
+    body.appendChild(label);
+  }
+}
+function triggerPdfUpload(body,b){
+  const input=document.createElement('input'); input.type='file'; input.accept='application/pdf';
+  input.addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f) return;
+    if(f.size > 3*1024*1024){ toast(t('pdfTooLarge')); return; }
+    const reader=new FileReader();
+    reader.onload=()=>{ b.dataUrl=reader.result; b.fileName=f.name; renderPdfBody(body,b); };
+    reader.readAsDataURL(f);
+  });
+  input.click();
+}
+function renderLinkBody(body, b){
+  body.innerHTML = '';
+  const labelInput = document.createElement('input');
+  labelInput.className='verse-ref'; labelInput.placeholder=t('linkLabelPh'); labelInput.value=b.label||'';
+  labelInput.addEventListener('input', ()=>{ b.label = labelInput.value; });
+  const urlInput = document.createElement('input');
+  urlInput.className='verse-ref'; urlInput.placeholder=t('linkUrlPh'); urlInput.value=b.url||'';
+  urlInput.addEventListener('input', ()=>{ b.url = urlInput.value; });
+  body.append(labelInput, urlInput);
+}
+
+function attachDrag(handle, el, b){
+  handle.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    handle.setPointerCapture(e.pointerId);
+    const canvas = el.parentElement;
+    const rect = canvas.getBoundingClientRect();
+    const startX = e.clientX, startY = e.clientY;
+    const startLeft = b.x, startTop = b.y;
+    el.style.zIndex = ++state.zCounter;
+    function onMove(ev){
+      const dxPct = (ev.clientX-startX)/rect.width*100;
+      const dyPct = (ev.clientY-startY)/rect.height*100;
+      b.x = clamp(startLeft+dxPct, 0, 100-b.w);
+      b.y = clamp(startTop+dyPct, 0, 92);
+      el.style.left = b.x+'%'; el.style.top = b.y+'%';
+    }
+    function onUp(){ handle.removeEventListener('pointermove', onMove); handle.removeEventListener('pointerup', onUp); }
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onUp);
+  });
+}
+function attachResize(handle, el, b){
+  handle.addEventListener('pointerdown', e=>{
+    e.preventDefault(); e.stopPropagation();
+    handle.setPointerCapture(e.pointerId);
+    const canvas = el.parentElement;
+    const rect = canvas.getBoundingClientRect();
+    const startX = e.clientX;
+    const startW = b.w;
+    function onMove(ev){
+      const dxPct = (ev.clientX-startX)/rect.width*100;
+      b.w = clamp(startW+dxPct, 15, 98-b.x);
+      el.style.width = b.w+'%';
+    }
+    function onUp(){ handle.removeEventListener('pointermove', onMove); handle.removeEventListener('pointerup', onUp); }
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onUp);
+  });
+}
+function addBlock(type){
+  const count = state.editorBlocks.length;
+  const b = {
+    id:'b_'+Date.now()+'_'+count, type,
+    x: clamp(8 + (count%4)*8, 0, 60),
+    y: clamp(8 + (count%5)*14, 0, 80),
+    w: type==='image' ? 28 : (type==='pdf' ? 40 : (type==='link' ? 42 : 50)),
+    content:'', imgSrc:null, verseRef:'', verseText:'', dataUrl:null, fileName:'', label:'', url:''
+  };
+  state.editorBlocks.push(b);
+  document.getElementById('editor-canvas').appendChild(buildBlockEl(b));
+}
+document.getElementById('add-text-btn').addEventListener('click', ()=> addBlock('text'));
+document.getElementById('add-image-btn').addEventListener('click', ()=> addBlock('image'));
+document.getElementById('add-verse-btn').addEventListener('click', ()=> addBlock('verse'));
+document.getElementById('add-link-btn').addEventListener('click', ()=> addBlock('link'));
+document.getElementById('add-pdf-btn').addEventListener('click', ()=> addBlock('pdf'));
+document.getElementById('cancel-edit-btn').addEventListener('click', ()=>{ switchView('admin'); setAdminTab(state.editingCollection||'quests'); });
+document.getElementById('save-quest-btn').addEventListener('click', async ()=>{
+  const title = document.getElementById('quest-title').value.trim();
+  if(!title){ toast(t('titleRequired')); document.getElementById('quest-title').focus(); return; }
+  const icon = document.getElementById('quest-icon').value;
+  const color = selectedColor();
+  const blocks = state.editorBlocks.map(b=>({...b}));
+  const collection = state.editingCollection;
+  if(state.editingId){
+    const idx = state[collection].findIndex(x=>x.id===state.editingId);
+    state[collection][idx] = { id: state.editingId, icon, color, title, blocks };
+  } else {
+    state[collection].push({ id: (collection==='quests'?'q_':'t_')+Date.now(), icon, color, title, blocks });
+  }
+  await STORE.set(collection, JSON.stringify(state[collection]), true);
+  toast(t('savedToast'));
+  switchView('admin');
+  setAdminTab(collection);
+});
+
+/* ================= Nav ================= */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const view = btn.dataset.view;
+    if(view==='kids') switchView('kids');
+    else { if(state.loggedIn){ switchView(state.role==='missionary' ? 'admin' : 'volunteer'); } else { switchView('login'); } }
+  });
+});
+document.getElementById('lang-toggle').addEventListener('click', ()=>{
+  state.lang = state.lang==='pt' ? 'en' : 'pt';
+  applyI18n();
+});
+
+/* ================= Init ================= */
+async function init(){
+  const q = await STORE.get('quests', true);
+  if(q){ try{ state.quests = JSON.parse(q); }catch(e){ state.quests = seedQuests(); } }
+  else { state.quests = seedQuests(); STORE.set('quests', JSON.stringify(state.quests), true); }
+
+  const tr = await STORE.get('trainings', true);
+  if(tr){ try{ state.trainings = JSON.parse(tr); }catch(e){ state.trainings = seedTrainings(); } }
+  else { state.trainings = seedTrainings(); STORE.set('trainings', JSON.stringify(state.trainings), true); }
+
+  const cr = await STORE.get('children-roster', true);
+  if(cr){ try{ state.childrenRoster = JSON.parse(cr); }catch(e){ state.childrenRoster = []; } }
+
+  const su = await STORE.get('site-url', true);
+  if(su){ state.siteUrl = su; }
+
+  const logo = await STORE.get('app-logo', true);
+  if(logo){
+    state.logo = logo;
+    document.getElementById('logo-img').src = logo;
+    document.getElementById('logo-img').classList.remove('hidden');
+    document.getElementById('logo-fallback').classList.add('hidden');
+  }
+
+  populateIconSelect();
+  applyI18n();
+  switchView('kids');
+}
+init();
+</script>
+</body>
+</html>
